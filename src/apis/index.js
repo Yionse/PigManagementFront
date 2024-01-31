@@ -26,14 +26,12 @@ httpInstance.interceptors.request.use(
 // 配置响应拦截器
 httpInstance.interceptors.response.use(
   (result) => {
-    console.log(result);
-    return result.data;
+    if (result.data.code === 500) {
+      ElMessage.error(result.data.message);
+    }
+    return result.data.data;
   },
   (error) => {
-    ElMessage({
-      message: "网络错误",
-      type: "error",
-    });
     return Promise.reject(error);
   }
 );

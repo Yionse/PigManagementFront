@@ -1,6 +1,10 @@
 <script setup>
 import { ElMessage } from "element-plus";
 import { reactive, ref } from "vue";
+import { fetchRegister } from "../../../apis/user";
+import { useRequest } from "vue-request";
+
+const { loading, runAsync } = useRequest(fetchRegister);
 
 //  引入Form实例
 const ruleFormRef = ref();
@@ -60,7 +64,7 @@ const rules = {
 // 点击了注册按钮的回调
 const submitForm = (formEl) => {
   if (!formEl) return;
-  formEl.validate((valid) => {
+  formEl.validate(async (valid) => {
     // 点击时需要再次验证表单是否达到要求
     if (!valid) {
       ElMessage({
@@ -70,6 +74,14 @@ const submitForm = (formEl) => {
       return false;
     } else {
       // 则代表通过，可以向后端发起注册请求
+      const res = await runAsync({
+        account: formLabelAlign.account,
+        username: formLabelAlign.name,
+        password: formLabelAlign.pass,
+      });
+      if (res?.isSuccess) {
+        ElMessage.success("注册成功");
+      }
     }
   });
 };
@@ -128,6 +140,7 @@ const submitForm = (formEl) => {
       type="primary"
       class="w-full mt-8"
       @click="submitForm(ruleFormRef)"
+      :loading="loading"
       >注册</el-button
     >
   </el-form>

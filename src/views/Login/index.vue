@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import Login from "@/views/Login/components/Login.vue";
-import Register from "./components/Register.vue";
+import Register from "@/views/Login/components/Register.vue";
 const tabKey = ref("login");
 </script>
 

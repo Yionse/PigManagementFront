@@ -2,10 +2,11 @@
 import { reactive, ref } from "vue";
 import { ElMessage } from "element-plus";
 import { useRequest } from "vue-request";
-import { fetchLogin } from "../../../apis/user";
+import { fetchLogin } from "@/apis/user";
+import { useRouter } from "vue-router";
 
-const { loading, run } = useRequest(fetchLogin, { manual: true });
-
+const { loading, runAsync } = useRequest(fetchLogin, { manual: true });
+const router = useRouter();
 //  引入Form实例
 const ruleFormRef = ref();
 const formLabelAlign = reactive({
@@ -37,7 +38,7 @@ const rules = {
 };
 
 // 点击了登录按钮的回调
-const submitForm = async (formEl) => {
+const submitForm = (formEl) => {
   if (!formEl) return;
   formEl.validate(async (valid) => {
     // 点击时需要再次验证表单是否达到要求
@@ -49,11 +50,17 @@ const submitForm = async (formEl) => {
       return false;
     } else {
       // 则代表通过，可以向后端发起注册请求
-      const res = await run({
+      const res = await runAsync({
         username: formLabelAlign.username,
         password: formLabelAlign.password,
       });
-      console.log(res, 123123);
+      if (res.isLogin) {
+        ElMessage.success("登录成功");
+        console.log(router);
+        router.push("/home");
+      } else {
+        ElMessage.error("登录失败");
+      }
     }
   });
 };
