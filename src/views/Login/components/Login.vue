@@ -57,7 +57,7 @@ const submitForm = (formEl) => {
       if (res.isLogin) {
         ElMessage.success("登录成功");
         console.log(router);
-        router.push("/home");
+        router.push("/home/index");
       } else {
         ElMessage.error("登录失败");
       }

@@ -6,6 +6,8 @@ import { router } from "./routes";
 import AppVue from "./App.vue";
 import * as ElementPlusIconsVue from "@element-plus/icons-vue";
 import { setGlobalOptions } from "vue-request";
+import { DatePicker } from "ant-design-vue";
+import "ant-design-vue/dist/reset.css";
 
 setGlobalOptions({
   manual: true,
@@ -18,6 +20,7 @@ const app = createApp(AppVue);
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component);
 }
+app.use(DatePicker);
 
 // 引入vue-router
 app.use(router);
