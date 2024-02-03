@@ -13,6 +13,7 @@
     "ant-design-vue": "4.x",
     "autoprefixer": "^10.4.17",
     "axios": "^1.6.5",
+    "echarts": "^5.4.3",
     "element-plus": "^2.5.3",
     "moment": "^2.30.1",
     "postcss": "^8.4.33",

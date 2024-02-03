@@ -17,8 +17,18 @@ const router = useRouter();
 
 const itemHandle = (e) => {
   router.push(`/home/${e.key}`);
-  // title.value = CustomMenu.find((item) => item.key === e.key)
+  title.value = CustomMenu.find((item) => item.key === e.key).label;
 };
+
+onMounted(() => {
+  const currentStateArray = location.pathname.split("/");
+  const currentState = CustomMenu.find(
+    (item) => item.key === currentStateArray[currentStateArray.length - 1]
+  );
+  state.selectedKeys = [currentState.key];
+  state.openKeys = [currentState.key];
+  title.value = currentState.label;
+});
 </script>
 
 <template>
@@ -33,7 +43,9 @@ const itemHandle = (e) => {
       @click="itemHandle"
     ></Menu>
     <div class="flex-grow">
-      <Card class="w-full"></Card>
+      <Card class="m-4 font-bold text-2xl">
+        {{ title }}
+      </Card>
       <RouterView></RouterView>
     </div>
   </div>
