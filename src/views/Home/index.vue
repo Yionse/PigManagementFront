@@ -1,6 +1,6 @@
 <script setup>
-import { reactive } from "vue";
-import { Menu } from "ant-design-vue";
+import { reactive, ref, onMounted } from "vue";
+import { Menu, Card } from "ant-design-vue";
 import { CustomMenu } from "@/routes";
 import { useRouter } from "vue-router";
 
@@ -11,10 +11,13 @@ const state = reactive({
   openKeys: ["index"],
 });
 
+const title = ref("");
+
 const router = useRouter();
 
 const itemHandle = (e) => {
   router.push(`/home/${e.key}`);
+  // title.value = CustomMenu.find((item) => item.key === e.key)
 };
 </script>
 
@@ -29,7 +32,10 @@ const itemHandle = (e) => {
       theme="dark"
       @click="itemHandle"
     ></Menu>
-    <RouterView></RouterView>
+    <div class="flex-grow">
+      <Card class="w-full"></Card>
+      <RouterView></RouterView>
+    </div>
   </div>
 </template>
 
