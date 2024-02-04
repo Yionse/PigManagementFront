@@ -27,7 +27,7 @@ import { ElMessage } from "element-plus";
 const { runAsync, loading } = useRequest(fetchUpdatePig);
 const { runAsync: addPig } = useRequest(fetchAddPig);
 // 获取当前页面数据
-const { data, refreshAsync } = getPigList();
+const { data, refreshAsync, loading: pigListLoading } = getPigList();
 const { data: breedList } = getBreed();
 
 // 定义两个变量控制Model的关闭与开启
@@ -68,7 +68,7 @@ const column = [
     dataIndex: "breedId",
     title: "猪种",
     customRender: ({ record }) =>
-      breedList?.value.find((item) => item.breedId === record.breedId)
+      breedList?.value?.find((item) => item.breedId === record.breedId)
         ?.breedName,
   },
   {
@@ -187,7 +187,7 @@ const pagination = computed(() => ({
       :pagination="pagination"
       @change="tableChangeHandle"
       bordered
-      :loading="loading"
+      :loading="pigListLoading || loading"
     >
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'status'">
@@ -213,6 +213,7 @@ const pagination = computed(() => ({
             ok-text="确定"
             cancel-text="取消"
             @confirm="() => exitHandle(record)"
+            :disabled="!!record.exitDate"
           >
             <Button type="link" :disabled="!!record.exitDate">出栏</Button>
           </Popconfirm>

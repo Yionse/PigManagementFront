@@ -3,8 +3,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import {
   MailOutlined,
   CalendarOutlined,
-  AppstoreOutlined,
-  SettingOutlined,
+  OrderedListOutlined,
 } from "@ant-design/icons-vue";
 
 export const router = createRouter({
@@ -38,6 +37,13 @@ export const router = createRouter({
             document.title = "种猪管理";
           },
         },
+        {
+          path: "breedType",
+          component: () => import("@/views/BreedType/index.vue"),
+          beforeEnter: () => {
+            document.title = "品种管理";
+          },
+        },
       ],
     },
   ],
@@ -53,5 +59,10 @@ export const CustomMenu = reactive([
     key: "pig",
     label: "种猪管理",
     icon: h(CalendarOutlined),
+  },
+  {
+    key: "breedType",
+    label: "品种管理",
+    icon: h(OrderedListOutlined),
   },
 ]);
