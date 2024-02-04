@@ -29,7 +29,7 @@ httpInstance.interceptors.response.use(
     if (result.data.code === 500) {
       ElMessage.error(result.data.message);
     }
-    return result.data.data;
+    return result.data.result;
   },
   (error) => {
     return Promise.reject(error);

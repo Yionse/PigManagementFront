@@ -36,13 +36,13 @@ onMounted(() => {
     <Menu
       v-model:openKeys="state.openKeys"
       v-model:selectedKeys="state.selectedKeys"
-      :style="{ width: '256px', height: '100%' }"
+      :style="{ width: '20%', height: '100%', position: 'fixed', top: '0px' }"
       :mode="state.mode"
       :items="CustomMenu"
       theme="dark"
       @click="itemHandle"
     ></Menu>
-    <div class="flex-grow">
+    <div class="w-4/5" style="margin-left: 20%">
       <Card class="m-4 font-bold text-2xl">
         {{ title }}
       </Card>
