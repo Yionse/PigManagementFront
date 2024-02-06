@@ -1,9 +1,10 @@
 import { h, reactive } from "vue";
 import { createRouter, createWebHistory } from "vue-router";
 import {
-  MailOutlined,
+  PieChartOutlined,
   CalendarOutlined,
   OrderedListOutlined,
+  PrinterOutlined,
 } from "@ant-design/icons-vue";
 
 export const router = createRouter({
@@ -44,6 +45,13 @@ export const router = createRouter({
             document.title = "品种管理";
           },
         },
+        {
+          path: "pigsty",
+          component: () => import("@/views/Pigsty/index.vue"),
+          beforeEnter: () => {
+            document.title = "猪舍管理";
+          },
+        },
       ],
     },
   ],
@@ -53,7 +61,7 @@ export const CustomMenu = reactive([
   {
     key: "index",
     label: "主页",
-    icon: h(MailOutlined),
+    icon: h(PieChartOutlined),
   },
   {
     key: "pig",
@@ -64,5 +72,10 @@ export const CustomMenu = reactive([
     key: "breedType",
     label: "品种管理",
     icon: h(OrderedListOutlined),
+  },
+  {
+    key: "pigsty",
+    label: "猪舍管理",
+    icon: h(PrinterOutlined),
   },
 ]);
