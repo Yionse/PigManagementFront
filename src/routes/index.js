@@ -52,6 +52,13 @@ export const router = createRouter({
             document.title = "猪舍管理";
           },
         },
+        {
+          path: "doctor",
+          component: () => import("@/views/Doctor/index.vue"),
+          beforeEnter: () => {
+            document.title = "医生管理";
+          },
+        },
       ],
     },
   ],
@@ -76,6 +83,11 @@ export const CustomMenu = reactive([
   {
     key: "pigsty",
     label: "猪舍管理",
+    icon: h(PrinterOutlined),
+  },
+  {
+    key: "doctor",
+    label: "医生管理",
     icon: h(PrinterOutlined),
   },
 ]);
