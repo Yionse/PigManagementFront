@@ -131,7 +131,11 @@ const updateHandleClick = async () => {
 
 // 出栏回调
 const exitHandle = async (record) => {
-  await runAsync({ ...record, exitDate: moment().format("YYYY-MM-DD") });
+  await runAsync({
+    ...record,
+    exitDate: moment().format("YYYY-MM-DD"),
+    isExit: true,
+  });
   await refreshAsync();
   ElMessage.success("出栏成功");
 };

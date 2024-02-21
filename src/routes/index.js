@@ -59,6 +59,20 @@ export const router = createRouter({
             document.title = "医生管理";
           },
         },
+        {
+          path: "entryRecord",
+          component: () => import("@/views/EntryRecord/index.vue"),
+          beforeEnter: () => {
+            document.title = "入栏记录";
+          },
+        },
+        {
+          path: "exitRecord",
+          component: () => import("@/views/ExitRecord/index.vue"),
+          beforeEnter: () => {
+            document.title = "出栏记录";
+          },
+        },
       ],
     },
   ],
@@ -88,6 +102,16 @@ export const CustomMenu = reactive([
   {
     key: "doctor",
     label: "医生管理",
+    icon: h(PrinterOutlined),
+  },
+  {
+    key: "entryRecord",
+    label: "入栏管理",
+    icon: h(PrinterOutlined),
+  },
+  {
+    key: "exitRecord",
+    label: "出栏管理",
     icon: h(PrinterOutlined),
   },
 ]);
