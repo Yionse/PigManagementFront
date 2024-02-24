@@ -73,6 +73,20 @@ export const router = createRouter({
             document.title = "出栏记录";
           },
         },
+        {
+          path: "breedingRecord",
+          component: () => import("@/views/BreedingRecord/index.vue"),
+          beforeEnter: () => {
+            document.title = "繁殖记录";
+          },
+        },
+        {
+          path: "healthRecord",
+          component: () => import("@/views/Health/index.vue"),
+          beforeEnter: () => {
+            document.title = "生病记录";
+          },
+        },
       ],
     },
   ],
@@ -112,6 +126,16 @@ export const CustomMenu = reactive([
   {
     key: "exitRecord",
     label: "出栏管理",
+    icon: h(PrinterOutlined),
+  },
+  {
+    key: "breedingRecord",
+    label: "繁殖记录",
+    icon: h(PrinterOutlined),
+  },
+  {
+    key: "healthRecord",
+    label: "生病记录",
     icon: h(PrinterOutlined),
   },
 ]);

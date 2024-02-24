@@ -4,6 +4,7 @@ import { getExitRecordList } from "../../apis/manageRecord";
 import { QuestionCircleOutlined } from "@ant-design/icons-vue";
 // 获取一些数据
 const { data: breedList } = getExitRecordList();
+console.log(breedList, "这里又有值了");
 const columns = [
   { dataIndex: "recordId", title: "出栏编号" },
   {

@@ -1,5 +1,5 @@
 <script setup>
-import { computed, reactive, ref } from "vue";
+import { computed, reactive, ref, watch } from "vue";
 import {
   getPigList,
   getBreed,
@@ -18,6 +18,8 @@ import {
   Radio,
   DatePicker,
   Tag,
+  RadioGroup,
+  RadioButton,
 } from "ant-design-vue";
 import { useRequest } from "vue-request";
 import moment from "moment";
@@ -29,6 +31,9 @@ const { runAsync: addPig } = useRequest(fetchAddPig);
 // 获取当前页面数据
 const { data, refreshAsync, loading: pigListLoading } = getPigList();
 const { data: breedList } = getBreed();
+
+// 是否在栏的数据筛选
+const isHere = ref(true);
 
 // 定义两个变量控制Model的关闭与开启
 const isOpenModal = ref(false);
@@ -159,17 +164,31 @@ const tableChangeHandle = ({ current, pageSize }) => {
   currentPage.value = current;
   currentPageSize.value = pageSize;
 };
-const pagination = computed(() => ({
-  total: data.value?.pig.length || 0,
-  current: currentPage.value,
-  pageSize: currentPageSize.value,
-  showSizeChanger: true,
-}));
+const newData = ref();
+// 监听data.value的变化，在有数据时更新
+watch(
+  () => data.value,
+  (newValue) => {
+    newData.value = newValue.pig.filter((item) => item.exitDate === null);
+  }
+);
+const changeRadio = (e) => {
+  if (e.target.value) {
+    // 如果是在栏
+    newData.value = data?.value.pig.filter((item) => item.exitDate === null);
+  } else {
+    newData.value = data?.value.pig.filter((item) => item.exitDate !== null);
+  }
+};
 </script>
 
 <!-- 结构相关，不做过多注释 -->
 <template>
   <Card class="mx-4">
+    <RadioGroup v-model:value="isHere" class="mx-2" @change="changeRadio">
+      <RadioButton :value="true">在栏</RadioButton>
+      <RadioButton :value="false">已出栏</RadioButton>
+    </RadioGroup>
     <Button
       type="primary"
       class="my-2"
@@ -187,7 +206,7 @@ const pagination = computed(() => ({
     >
     <Table
       :columns="column"
-      :dataSource="data?.pig"
+      :dataSource="newData"
       :pagination="pagination"
       @change="tableChangeHandle"
       bordered
