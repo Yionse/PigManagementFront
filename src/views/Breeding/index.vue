@@ -15,23 +15,23 @@ import { useRequest } from "vue-request";
 import { ElMessage } from "element-plus";
 import { computed, ref, reactive, watch } from "vue";
 import {
-  fetchAddBreeding,
-  fetchDeleteBreeding,
-  fetchUpdateBreeding,
-  getBreedingList,
-} from "../../apis/breedingRecord";
+  fetchAddBreedings,
+  fetchDeleteBreedings,
+  fetchUpdateBreedings,
+  getBreedingsList,
+} from "../../apis/breeding";
 import { getBreed, getPigList } from "../../apis/pig";
 import moment from "moment";
 
 // 使用useRequest获取繁殖列表的数据
-const { data: breedingRecord, runAsync: refetchBreeding } = getBreedingList();
+const { data: breedingRecord, runAsync: refetchBreeding } = getBreedingsList();
 const { data: pigList } = getPigList();
 const { data } = getBreed();
 
 // 筛选相关
 const filterConditions = ref({
   sowId: null,
-  type: null,
+  boarId: null,
   status: null,
 });
 
@@ -52,97 +52,105 @@ const pagination = computed(() => ({
 // Table展示的列信息
 const column = [
   {
-    dataIndex: "sowId",
+    dataIndex: "sowID",
     title: "母猪耳号",
   },
   {
-    dataIndex: "type",
-    title: "猪品种",
+    dataIndex: "boarId",
+    title: "公猪耳号",
+  },
+  {
+    dataIndex: "EhId",
+    title: "仔猪耳号",
+  },
+  {
+    dataIndex: "birthDay",
+    title: "仔猪出生日期",
+  },
+  {
+    dataIndex: "weight",
+    title: "体重（公斤）",
   },
   {
     dataIndex: "status",
-    title: "配前状态",
+    title: "健康情况",
   },
   {
-    dataIndex: "birthsCount",
-    title: "分娩胎次",
+    dataIndex: "oneDate",
+    title: "配种期",
   },
   {
-    dataIndex: "statusDays",
-    title: "状态天数",
+    dataIndex: "twoDate",
+    title: "分娩期",
   },
   {
-    dataIndex: "loveDays",
-    title: "情期",
+    dataIndex: "oneCount",
+    title: "健仔",
   },
   {
-    dataIndex: "customDate",
-    title: "输精日期",
-  },
-  {
-    dataIndex: "timer",
-    title: "时间",
-  },
-  {
-    dataIndex: "market",
-    title: "备注",
+    dataIndex: "twoCount",
+    title: "弱仔",
   },
 ];
 
 // 使用useRequest处理异步请求
-const { runAsync: deleteDoctor } = useRequest(fetchDeleteBreeding);
-const { runAsync: addDoctor } = useRequest(fetchAddBreeding);
+const { runAsync: deleteDoctor } = useRequest(fetchDeleteBreedings);
+const { runAsync: addDoctor } = useRequest(fetchAddBreedings);
 
 // Model相关的变量和方法
 const isOpenDoctorModal = ref(false);
 const isOpenAddDoctorModal = ref(false);
 const formState = reactive({
-  sowId: null,
-  type: null,
+  sowID: null,
+  boarId: null,
+  ehId: null,
+  birthDay: null,
+  weight: null,
   status: null,
-  birthsCount: null,
-  statusDays: null,
-  loveDays: null,
-  customDate: null,
-  timer: null,
-  market: null,
+  oneDate: null,
+  twoDate: null,
+  oneCount: null,
+  twoCount: null,
 });
 
-// 打开繁殖记录信息编辑弹窗
+// 打开育种信息编辑弹窗
 const openDoctorModal = (record) => {
   isOpenDoctorModal.value = true;
   Object.assign(formState, record);
 };
 
-// 关闭繁殖记录信息编辑弹窗
+// 关闭育种信息编辑弹窗
 const closeDoctorModal = () => {
   isOpenDoctorModal.value = false;
 };
 
-// 删除繁殖记录回调
+// 删除育种记录回调
 const deleteDoctorHandle = async (record) => {
   await deleteDoctor(record.doctorId);
   await refetchBreeding();
   ElMessage.success("删除成功");
 };
 
-// 打开新增繁殖记录弹窗
+// 打开新增育种弹窗
 const openAddDoctorModal = () => {
   isOpenAddDoctorModal.value = true;
   // 清空表单数据，或者根据需要设置默认值
   formState.value = {};
 };
 
-// 关闭新增繁殖记录弹窗
+// 关闭新增育种弹窗
 const closeAddDoctorModal = () => {
   isOpenAddDoctorModal.value = false;
 };
 
-// 添加繁殖记录回调
+// 添加育种回调
 const addDoctorHandle = async () => {
   await addDoctor({
     ...formState,
-    customDate: moment(formState.customDate).format("YYYY-MM-DD"),
+    oneDate: moment(formState.oneDate).format("YYYY-MM-DD"),
+    twoDate: moment(formState.twoDate).format("YYYY-MM-DD"),
+    birthDay: moment(formState.birthDay).format("YYYY-MM-DD"),
+    weight: Number(formState.weight),
   });
   await refetchBreeding();
   closeAddDoctorModal();
@@ -156,10 +164,10 @@ const changeSowId = (e) => {
   };
 };
 
-const changeType = (e) => {
+const changeBoar = (e) => {
   filterConditions.value = {
     ...filterConditions.value,
-    type: e,
+    boarId: e,
   };
 };
 
@@ -189,47 +197,51 @@ watch(
             style="width: 120px"
             v-model:value="filterConditions.sowId"
             :options="
-              breedingRecord?.data.map((item) => {
-                return {
-                  label: item.sowId,
-                  value: item.sowId,
-                };
-              })
+              pigList?.pig
+                .filter((item) => item.gender === '母猪')
+                .map((item) => {
+                  return {
+                    label: item.pigId,
+                    value: item.pigId,
+                  };
+                })
             "
           />
         </Space>
         <Space class="my-2">
-          <span>配前状态：</span>
+          <span>公猪耳号：</span>
+          <Select
+            @change="changeBoar"
+            style="width: 120px"
+            v-model:value="filterConditions.boarId"
+            :options="
+              pigList?.pig
+                .filter((item) => item.gender === '公猪')
+                .map((item) => {
+                  return {
+                    label: item.pigId,
+                    value: item.pigId,
+                  };
+                })
+            "
+          />
+        </Space>
+        <Space class="my-2">
+          <span>健康状态：</span>
           <Select
             @change="changeStatus"
             v-model:value="filterConditions.status"
             style="width: 120px"
             :options="[
-              { label: '后备', value: '后备' },
-              { label: '怀孕', value: '怀孕' },
-              { label: '正常', value: '正常' },
+              { label: '健康', value: '健康' },
+              { label: '良好', value: '良好' },
+              { label: '差劲', value: '差劲' },
             ]"
-          />
-        </Space>
-        <Space class="my-2">
-          <span>猪品种：</span>
-          <Select
-            @change="changeType"
-            v-model:value="filterConditions.type"
-            style="width: 120px"
-            :options="
-              breedingRecord?.data.map((item) => {
-                return {
-                  label: item.type,
-                  value: item.type,
-                };
-              })
-            "
           />
         </Space>
 
         <Button type="primary" class="my-2 w-32" @click="openAddDoctorModal"
-          >添加繁殖记录</Button
+          >添加育种记录</Button
         >
         <Button
           type="primary"
@@ -268,22 +280,22 @@ watch(
       </template> -->
     </Table>
 
-    <!-- 新增繁殖记录弹窗 -->
+    <!-- 新增育种记录弹窗 -->
     <Modal
       :open="isOpenAddDoctorModal"
       @ok="addDoctorHandle"
       @cancel="closeAddDoctorModal"
-      title="添加繁殖信息"
+      title="添加育种信息"
     >
       <Form
         :model="formState"
-        :label-col="{ span: 4 }"
+        :label-col="{ span: 6 }"
         :wrapper-col="{ span: 12 }"
         labelAlign="left"
       >
-        <Form.Item name="sowId" label="母猪">
+        <Form.Item name="sowID" label="母猪">
           <Select
-            v-model:value="formState.sowId"
+            v-model:value="formState.sowID"
             style="width: 120px"
             :options="
               pigList?.pig
@@ -300,54 +312,66 @@ watch(
           >
           </Select>
         </Form.Item>
-        <Form.Item name="type" label="猪品种">
+        <Form.Item name="boarId" label="公猪">
           <Select
-            v-model:value="formState.type"
+            v-model:value="formState.boarId"
             style="width: 120px"
             :options="
-              data?.map((item) => {
-                return {
-                  label: item.breedName,
-                  value: item.breedName,
-                };
-              })
+              pigList?.pig
+                .filter(
+                  (item) => item.gender === '公猪' && item.exitDate === null
+                )
+                .map((item) => {
+                  return {
+                    value: item.pigId,
+                    label: item.pigId,
+                  };
+                }) || []
             "
           >
-          </Select
-        ></Form.Item>
-        <Form.Item name="status" label="配前状态">
-          <Select
-            v-model:value="formState.status"
-            style="width: 120px"
-            :options="[
-              { label: '后备', value: '后备' },
-              { label: '怀孕', value: '怀孕' },
-              { label: '正常', value: '正常' },
-            ]"
-          >
-          </Select
-        ></Form.Item>
-        <Form.Item name="birthsCount" label="分娩胎次">
-          <Input v-model:value="formState.birthsCount" />
+          </Select>
         </Form.Item>
-        <Form.Item name="statusDays" label="状态天数">
-          <Input v-model:value="formState.statusDays" />
-        </Form.Item>
-        <Form.Item name="loveDays" label="情期">
-          <Input v-model:value="formState.loveDays" />
-        </Form.Item>
-        <Form.Item name="customDate" label="输精日期">
+        <Form.Item name="birthDay" label="仔猪出生日期">
           <DatePicker
-            v-model:value="formState.customDate"
+            v-model:value="formState.birthDay"
             placeholder="请选择出生日期"
             :default-value="moment()"
           />
         </Form.Item>
-        <Form.Item name="timer" label="时间">
-          <Input v-model:value="formState.timer" />
+        <Form.Item name="weight" label="体重（公斤）">
+          <Input v-model:value="formState.weight" />
         </Form.Item>
-        <Form.Item name="market" label="备注">
-          <Input v-model:value="formState.market" />
+        <Form.Item name="status" label="健康情况">
+          <Select
+            v-model:value="formState.status"
+            style="width: 120px"
+            :options="[
+              { label: '健康', value: '健康' },
+              { label: '良好', value: '良好' },
+              { label: '差劲', value: '差劲' },
+            ]"
+          >
+          </Select
+        ></Form.Item>
+        <Form.Item name="oneDate" label="配种期">
+          <DatePicker
+            v-model:value="formState.oneDate"
+            placeholder="请选择出生日期"
+            :default-value="moment()"
+          />
+        </Form.Item>
+        <Form.Item name="twoDate" label="分娩期">
+          <DatePicker
+            v-model:value="formState.twoDate"
+            placeholder="请选择出生日期"
+            :default-value="moment()"
+          />
+        </Form.Item>
+        <Form.Item name="oneCount" label="健仔">
+          <Input v-model:value="formState.oneCount" />
+        </Form.Item>
+        <Form.Item name="twoCount" label="弱仔">
+          <Input v-model:value="formState.twoCount" />
         </Form.Item>
       </Form>
     </Modal>

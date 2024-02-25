@@ -456,9 +456,4 @@ const changeType = (e) => {
   </Modal>
 </template>
 
-<style lang="less">
-.text {
-  display: block;
-  width: 80px !important;
-}
-</style>
+<style lang="less"></style>

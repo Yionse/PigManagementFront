@@ -87,6 +87,13 @@ export const router = createRouter({
             document.title = "生病记录";
           },
         },
+        {
+          path: "breeding",
+          component: () => import("@/views/Breeding/index.vue"),
+          beforeEnter: () => {
+            document.title = "育种记录";
+          },
+        },
       ],
     },
   ],
@@ -136,6 +143,11 @@ export const CustomMenu = reactive([
   {
     key: "healthRecord",
     label: "生病记录",
+    icon: h(PrinterOutlined),
+  },
+  {
+    key: "breeding",
+    label: "育种记录",
     icon: h(PrinterOutlined),
   },
 ]);

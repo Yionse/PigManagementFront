@@ -3,6 +3,7 @@ import { reactive, ref, onMounted } from "vue";
 import { Menu, Card } from "ant-design-vue";
 import { CustomMenu } from "@/routes";
 import { useRouter } from "vue-router";
+import { ElMessage } from "element-plus";
 
 const state = reactive({
   mode: "inline",
@@ -18,6 +19,11 @@ const router = useRouter();
 const itemHandle = (e) => {
   router.push(`/home/${e.key}`);
   title.value = CustomMenu.find((item) => item.key === e.key).label;
+};
+
+const exitLogin = () => {
+  ElMessage.success("已退出登录");
+  router.push(`/`);
 };
 
 onMounted(() => {
@@ -43,8 +49,15 @@ onMounted(() => {
       @click="itemHandle"
     ></Menu>
     <div class="w-4/5" style="margin-left: 20%">
-      <Card class="m-4 font-bold text-2xl">
+      <Card class="m-4 font-bold text-2xl relative">
         {{ title }}
+        <Button
+          @click="exitLogin"
+          type="link"
+          class="font-normal text-sm absolute top-8 right-8"
+          style="color: skyblue"
+          >退出登录</Button
+        >
       </Card>
       <RouterView></RouterView>
     </div>

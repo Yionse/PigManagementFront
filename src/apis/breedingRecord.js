@@ -5,7 +5,15 @@ import { post, get } from ".";
 
 // 获取繁殖记录列表
 export function getBreedingList() {
-  return useRequest(async () => await get("/breeding/list"), { manual: false });
+  return useRequest(
+    async (data) => {
+      console.log(data);
+      return await post("/breeding/list", data);
+    },
+    {
+      manual: false,
+    }
+  );
 }
 
 // 更新繁殖记录信息

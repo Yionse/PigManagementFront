@@ -190,7 +190,11 @@ const addPigstyHandle = async () => {
       title="修改猪舍信息"
     >
       <!-- 修改猪舍表单 -->
-      <Form :model="formState">
+      <Form
+        :model="formState"
+        :label-col="{ span: 6 }"
+        :wrapper-col="{ span: 12 }"
+      >
         <Form.Item label="猪舍ID">
           <Input :value="formState.pigstyId" :disabled="true" />
         </Form.Item>
@@ -214,7 +218,12 @@ const addPigstyHandle = async () => {
       title="添加猪舍信息"
     >
       <!-- 添加猪舍表单 -->
-      <Form :model="formState">
+      <Form
+        :model="formState"
+        :label-col="{ span: 6 }"
+        :wrapper-col="{ span: 12 }"
+        labelAlign="left"
+      >
         <Form.Item label="猪舍名称">
           <Input v-model:value="formState.pigstyName" />
         </Form.Item>

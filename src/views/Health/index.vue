@@ -164,14 +164,16 @@ const newPig = ref();
 watch(
   () => pigList.value,
   (pigList) => {
-    const newData = pigList?.pig.map((item) => {
-      {
-        return {
-          label: item.pigId,
-          value: item.pigId,
-        };
-      }
-    });
+    const newData = pigList?.pig
+      .filter((item) => item.exitDate === null)
+      .map((item) => {
+        {
+          return {
+            label: item.pigId,
+            value: item.pigId,
+          };
+        }
+      });
     newPig.value = newData;
   }
 );
@@ -247,7 +249,12 @@ watch(
       @cancel="closeAddDoctorModal"
       title="添加病猪信息"
     >
-      <Form :model="formState">
+      <Form
+        :model="formState"
+        :label-col="{ span: 4 }"
+        :wrapper-col="{ span: 12 }"
+        labelAlign="left"
+      >
         <Form.Item label="种猪" name="pigId">
           <Select
             v-model:value="formState.pigId"
