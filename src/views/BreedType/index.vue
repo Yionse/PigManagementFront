@@ -45,7 +45,6 @@ const tableData = computed(() => {
 });
 
 const columns = [
-  { dataIndex: "breedId", title: "品种编号" },
   {
     dataIndex: "breedName",
     title: "品种",

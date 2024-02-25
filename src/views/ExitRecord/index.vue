@@ -6,10 +6,9 @@ import { QuestionCircleOutlined } from "@ant-design/icons-vue";
 const { data: breedList } = getExitRecordList();
 console.log(breedList, "这里又有值了");
 const columns = [
-  { dataIndex: "recordId", title: "出栏编号" },
   {
     dataIndex: "pigId",
-    title: "种猪Id",
+    title: "耳号",
   },
   {
     title: "出栏时间",

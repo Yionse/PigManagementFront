@@ -79,7 +79,7 @@ const column = [
     dataIndex: "breedId",
     title: "猪种",
     customRender: ({ record }) =>
-      breedList?.value?.find((item) => item.breedId === record.breedId)
+      breedList?.value?.find((item) => item.breedId == record.breedId)
         ?.breedName,
   },
   {
@@ -98,7 +98,7 @@ const column = [
   {
     title: "猪舍位置",
     customRender: ({ record }) =>
-      data.value?.pigsty.find((item) => item.pigstyId === record.pigstyId)
+      data.value?.pigsty.find((item) => item.pigstyId == record.pigstyId)
         ?.pigstyName,
   },
   {

@@ -46,16 +46,12 @@ const pagination = computed(() => ({
 // Table展示的列信息
 const column = [
   {
-    dataIndex: "recordId",
-    title: "记录ID",
-  },
-  {
     dataIndex: "boarId",
-    title: "公猪ID",
+    title: "公猪耳号",
   },
   {
     dataIndex: "sowId",
-    title: "母猪ID",
+    title: "母猪耳号",
   },
   {
     dataIndex: "breedingDate",

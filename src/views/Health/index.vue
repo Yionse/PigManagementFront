@@ -45,12 +45,8 @@ const pagination = computed(() => ({
 // Table展示的列信息
 const column = [
   {
-    dataIndex: "recordId",
-    title: "记录ID",
-  },
-  {
     dataIndex: "pigId",
-    title: "猪种ID",
+    title: "耳号",
   },
   {
     dataIndex: "diseaseName",
@@ -69,12 +65,10 @@ const column = [
     title: "治疗方法",
   },
   {
-    dataIndex: "doctorId",
-    title: "医生ID",
-  },
-  {
-    dataIndex: "doctorName",
     title: "医生名称",
+    customRender: ({ record }) =>
+      doctorList.value?.data?.find((item) => item.doctorId == record.doctorId)
+        ?.doctorName || "当前医生已离职",
   },
 ];
 
@@ -106,13 +100,13 @@ const closeDoctorModal = () => {
   isOpenDoctorModal.value = false;
 };
 
-const updateDoctorHandle = async () => {
-  const { doctorId, doctorName, totalHealing } = formState;
-  await updateDoctor(formState);
-  await refetchHeal();
-  closeDoctorModal();
-  ElMessage.success("修改成功");
-};
+// const updateDoctorHandle = async () => {
+//   const { doctorId, doctorName, totalHealing } = formState;
+//   await updateDoctor(formState);
+//   await refetchHeal();
+//   closeDoctorModal();
+//   ElMessage.success("修改成功");
+// };
 
 const deleteDoctorHandle = async (record) => {
   await deleteDoctor([record.doctorId]);
@@ -151,12 +145,12 @@ const allData = ref();
 watch(
   () => healthList.value,
   (healthList) => {
+    console.log(doctorList);
     const newData = healthList?.data.map((item) => {
       const doctor = doctorList.value?.data.find(
         (doctor) => item.doctorId == doctor.doctorId
       );
       console.log(doctor);
-      console.log(doctorList);
       return {
         ...item,
         doctorName: doctor?.doctorName || "医生已被解雇",
@@ -273,11 +267,7 @@ watch(
       <Form.Item label="治疗方法" name="treatmentMethod">
         <Input v-model:value="formState.treatmentMethod" />
       </Form.Item>
-      <Form.Item
-        name="treatmentDate"
-        label="治疗日期"
-        :rules="[{ required: true, message: '请选择治疗日期' }]"
-      >
+      <Form.Item name="treatmentDate" label="治疗日期">
         <DatePicker
           v-model:value="formState.treatmentDate"
           placeholder="请选择治疗日期"

@@ -7,10 +7,9 @@ import { QuestionCircleOutlined } from "@ant-design/icons-vue";
 const { data: breedList } = getEntryRecordList();
 
 const columns = [
-  { dataIndex: "recordId", title: "入栏编号" },
   {
     dataIndex: "pigId",
-    title: "种猪Id",
+    title: "耳号",
   },
   {
     title: "入栏时间",
