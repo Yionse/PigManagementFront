@@ -5,7 +5,14 @@ import { useRequest } from "vue-request";
 // 获取猪列表的函数
 export function getPigList() {
   // 使用useRequest钩子异步获取猪列表数据，manual设为false表示自动触发请求
-  return useRequest(async () => await get("/pig/list"), { manual: false });
+  return useRequest(
+    async (data) => {
+      return await post("/pig/list", data);
+    },
+    {
+      manual: false,
+    }
+  );
 }
 
 // 获取猪品种列表的函数

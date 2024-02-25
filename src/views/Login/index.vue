@@ -10,7 +10,9 @@ const tabKey = ref("login");
     <div
       class="model w-2/5 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-md px-7"
     >
-      <h2 class="text-center text-4xl mt-4 font-bold">生猪养殖管理系统</h2>
+      <h2 class="text-center text-4xl mt-4 font-bold">
+        猪场繁殖与育种管理系统
+      </h2>
       <el-tabs v-model="tabKey" class="demo-tabs mt-4">
         <el-tab-pane label="登录" name="login"><Login /> </el-tab-pane>
         <el-tab-pane label="注册" name="register"><Register /></el-tab-pane>

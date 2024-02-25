@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "start": "vite",
-    "build": "vue-tsc && vite build",
+    "start": "cross-env NODE=development  vite",
+    "build": "rimraf ./dist && cross-env NODE=production vite build",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -13,6 +13,7 @@
     "ant-design-vue": "4.x",
     "autoprefixer": "^10.4.17",
     "axios": "^1.6.5",
+    "cross-env": "^7.0.3",
     "echarts": "^5.4.3",
     "element-plus": "^2.5.3",
     "moment": "^2.30.1",

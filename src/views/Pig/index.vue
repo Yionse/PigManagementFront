@@ -20,6 +20,7 @@ import {
   Tag,
   RadioGroup,
   RadioButton,
+  Space,
 } from "ant-design-vue";
 import { useRequest } from "vue-request";
 import moment from "moment";
@@ -29,11 +30,16 @@ import { ElMessage } from "element-plus";
 const { runAsync, loading } = useRequest(fetchUpdatePig);
 const { runAsync: addPig } = useRequest(fetchAddPig);
 // 获取当前页面数据
-const { data, refreshAsync, loading: pigListLoading } = getPigList();
+const { data, runAsync: refreshAsync, loading: pigListLoading } = getPigList();
 const { data: breedList } = getBreed();
 
 // 是否在栏的数据筛选
-const isHere = ref(true);
+const filterConditions = ref({
+  isHere: null,
+  pigstyPosition: null,
+  gender: null,
+  type: null,
+});
 
 // 定义两个变量控制Model的关闭与开启
 const isOpenModal = ref(false);
@@ -165,45 +171,143 @@ const tableChangeHandle = ({ current, pageSize }) => {
   currentPageSize.value = pageSize;
 };
 const newData = ref();
-// 监听data.value的变化，在有数据时更新
+
 watch(
   () => data.value,
-  (newValue) => {
-    newData.value = newValue.pig.filter((item) => item.exitDate === null);
+  (newBaseData) => {
+    newData.value = newBaseData.pig;
   }
 );
-const changeRadio = (e) => {
-  if (e.target.value) {
-    // 如果是在栏
-    newData.value = data?.value.pig.filter((item) => item.exitDate === null);
-  } else {
-    newData.value = data?.value.pig.filter((item) => item.exitDate !== null);
+
+watch(
+  () => filterConditions.value,
+  (newFilterConditions) => {
+    refreshAsync({
+      breedId: newFilterConditions?.type,
+      pigstyId: newFilterConditions?.pigstyPosition,
+      gender: newFilterConditions?.gender,
+      isHere: newFilterConditions?.isHere,
+    });
   }
+);
+const changeRadioIsHere = (e) => {
+  filterConditions.value = {
+    ...filterConditions.value,
+    isHere: e.target.value,
+  };
+};
+const changePosition = (e) => {
+  filterConditions.value = {
+    ...filterConditions.value,
+    pigstyPosition: e,
+  };
+};
+const changeGender = (e) => {
+  filterConditions.value = {
+    ...filterConditions.value,
+    gender: e.target.value,
+  };
+};
+const changeType = (e) => {
+  filterConditions.value = {
+    ...filterConditions.value,
+    type: e,
+  };
 };
 </script>
 
 <!-- 结构相关，不做过多注释 -->
 <template>
   <Card class="mx-4">
-    <RadioGroup v-model:value="isHere" class="mx-2" @change="changeRadio">
-      <RadioButton :value="true">在栏</RadioButton>
-      <RadioButton :value="false">已出栏</RadioButton>
-    </RadioGroup>
-    <Button
-      type="primary"
-      class="my-2"
-      @click="
-        () => {
-          addState.gender = '公猪';
-          addState.pigstyId = pigstyOptions.find(
-            (item) => item.disabled === false
-          ).value;
-          addState.breedId = breedList?.[0].breedId;
-          isOpenAddModal = true;
-        }
-      "
-      >添加</Button
-    >
+    <Card class="mb-2">
+      <div class="flex flex-col">
+        <Space class="my-2">
+          <span class="text">是否在栏：</span>
+          <RadioGroup
+            v-model:value="filterConditions.isHere"
+            class="mx-2"
+            @change="changeRadioIsHere"
+          >
+            <RadioButton :value="1">在栏</RadioButton>
+            <RadioButton :value="2">已出栏</RadioButton>
+          </RadioGroup>
+        </Space>
+
+        <Space class="my-2">
+          <span class="text">性别：</span>
+          <RadioGroup
+            class="mx-2"
+            @change="changeGender"
+            v-model:value="filterConditions.gender"
+          >
+            <RadioButton value="公猪">公猪</RadioButton>
+            <RadioButton value="母猪">母猪</RadioButton>
+          </RadioGroup>
+        </Space>
+        <Space class="my-2">
+          <span class="text">猪舍位置：</span>
+          <Select
+            v-model:value="filterConditions.pigstyPosition"
+            @change="changePosition"
+            ref="select"
+            style="width: 120px"
+            :options="
+              data?.pigsty.map((item) => {
+                return {
+                  label: item.pigstyName,
+                  value: item.pigstyId,
+                };
+              })
+            "
+          />
+        </Space>
+        <Space class="my-2">
+          <span class="text">品种：</span>
+          <Select
+            v-model:value="filterConditions.type"
+            @change="changeType"
+            ref="select"
+            style="width: 120px"
+            :options="
+              breedList?.map((item) => {
+                return {
+                  label: item.breedName,
+                  value: item.breedId,
+                };
+              })
+            "
+          />
+        </Space>
+
+        <Button
+          type="primary"
+          class="my-2 w-20"
+          @click="
+            () => {
+              addState.gender = '公猪';
+              addState.pigstyId = pigstyOptions.find(
+                (item) => item.disabled === false
+              ).value;
+              addState.breedId = breedList?.[0].breedId;
+              isOpenAddModal = true;
+            }
+          "
+          >添加</Button
+        >
+        <Button
+          type="primary w-20"
+          @click="
+            () => {
+              filterConditions = {};
+              refreshAsync();
+            }
+          "
+        >
+          重置
+        </Button>
+      </div>
+    </Card>
+
     <Table
       :columns="column"
       :dataSource="newData"
@@ -352,4 +456,9 @@ const changeRadio = (e) => {
   </Modal>
 </template>
 
-<style lang="less"></style>
+<style lang="less">
+.text {
+  display: block;
+  width: 80px !important;
+}
+</style>
